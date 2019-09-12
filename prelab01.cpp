@@ -52,6 +52,44 @@ void Initialize() {
         v[1] = 1;
 }
 
+void Finalize() {
+        delete[] v;
+}
 
-^G Get Help       ^O WriteOut       ^R Read File      ^Y Prev Page      ^K Cut Text       ^C Cur Pos
-^X Exit           ^J Justify        ^W Where Is       ^V Next Page      ^U UnCut Text     ^T To Spell
+int main() {
+        Initialize();
+        
+        int userInput;
+        
+        while (userInput != 5)
+        {
+                cout << "Main menu:" << endl << "1. Print the array" << endl;
+                cout << "2. Append element at the end" << endl << "3. Remove last element" << endl;
+                cout << "4. Insert one element" << endl << "5. Exit" << endl;
+                
+                cin >> userInput;
+                switch(userInput)
+                {
+                        case 1:
+                                cout << "You selected \"Print the array\"" << endl;
+                                break;
+                        case 2:
+                                cout << "You selected \"Append element at the end\"" << endl;
+                                break;
+                        case 3:
+                                cout << "You selected \"Remove last element\"" << endl;
+                                break;
+                        case 4:
+                                cout << "You selected \"Insert one element\"" << endl;
+                                break;
+                        case 5:
+                                break;
+                }
+        }
+ 
+        // Put more code here
+        
+        Finalize();
+        
+        return 0;
+}

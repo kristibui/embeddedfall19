@@ -66,6 +66,7 @@ int main() {
                 cout << "Main menu:" << endl << "1. Print the array" << endl;
                 cout << "2. Append element at the end" << endl << "3. Remove last element" << endl;
                 cout << "4. Insert one element" << endl << "5. Exit" << endl;
+                cout << "Select an option:";
                 
                 cin >> userInput;
                 switch(userInput)

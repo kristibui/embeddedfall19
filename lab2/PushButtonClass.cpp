@@ -90,7 +90,18 @@ void WriteAllLeds(ZedBoard *board, int value)
 	}
 }
 
-/** Reads all the switches and returns their value in a single integer.
+int ReadAllSwitches(ZedBoard *board)
+{
+	int catVal = 0;
+	for (int i = 0; i < 8; i++) {
+                if (Read1Switch(board, i) == 1) {
+			catVal += 1 << i;
+        	}
+	}
+	return catVal;
+}
+
+/** Returns the integer representation of the button pressed.
 *
 * @param board Board for general-purpose I/O
 * @return  0 if no push button is pressed, and a value between 1 and 5 if any push button is pressed
@@ -106,17 +117,6 @@ int PushButtonGet(ZedBoard *board)
 	}
 	usleep(300000);
 	return 0;
-}
-
-int ReadAllSwitches(ZedBoard *board)
-{
-	int catVal = 0;
-	for (int i = 0; i < 8; i++) {
-                if (Read1Switch(board, i) == 1) {
-			catVal += 1 << i;
-        	}
-	}
-	return catVal;
 }
 
 int main()

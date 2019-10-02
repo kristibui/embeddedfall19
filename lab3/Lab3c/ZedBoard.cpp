@@ -69,7 +69,6 @@ void ZedBoard::Write1Led(int ledNum, int state)
 void ZedBoard::WriteAllLeds(int value)
 {
 	for (int i = 0; i <  8; i++) {
-		//int currentOffset = pow(2, i);
 		RegisterWrite(300 + (i * 4), (value / (1 << i)) % 2);
 	}
 }

@@ -25,7 +25,7 @@ WiimoteAccel::~WiimoteAccel(void) {
 // function that listens for button events on wiimote
 void WiimoteAccel::Listen() {
 	int code;
-	char buffer[32];
+	char buffer[16];
 	while (true)
 	{
 		read(fd, buffer, 16);

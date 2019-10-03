@@ -28,6 +28,7 @@ void WiimoteBtns::Listen() {
 	char buffer[32];
 	while (true)
 	{
+		read(fd, buffer, 32);
 		code = buffer[10];
 		value = buffer[12];
 		ButtonEvent(code, value);

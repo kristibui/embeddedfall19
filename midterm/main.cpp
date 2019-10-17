@@ -1,4 +1,5 @@
 #include "GPIO.h"
+#include "ZedBoard.h"
 #include <iostream>
 #include <stdlib.h>
 #include <thread>
@@ -78,6 +79,7 @@ int main()
 	**/
 	
 	// Done
+	ZedBoard *zed_board = new ZedBoard;
 
 	int ports[5] = {13, 10, 11, 12, 0};
 	GPIO gpio13(ports[0]);
@@ -86,23 +88,46 @@ int main()
 	GPIO gpio12(ports[3]);
         GPIO gpio0(ports[4]);
 
-        int start_on_time, end_on_time, start_position, end_position;
-        start_position = 90;
-        end_position = 90;
-        start_on_time = (start_position * 10) + 600;
-        end_on_time = (end_position * 10) + 600;
+        int base_on_time, others_on_time, base_position, bicep_position;
+	int wrist_on_time, wrist_position;
+        base_position = 70;
+	bicep_position = 90;
+	wrist_position = 120;
+	/**elbow_position = 90;
+	wrist_position = 90;
+        end_position = 90;**/
+        base_on_time = (base_position * 10) + 600;
+	wrist_on_time = (wrist_position * 10) + 600;
+        others_on_time = (bicep_position * 10) + 600;
+	//end_on_time = (end_position * 10) + 600;
         // Generate PWM signal with 20ms period and 1.5ms on time.
         // Generate 400 periods, this will take 20ms * 400 iterations = 8s
         int periods, time, rot_speed;
         rot_speed = 15;
-        time = (end_position - start_position) /  rot_speed;
-        periods = time /  0.02;
+        //time = (end_position - start_position) /  rot_speed;
+        //periods = time /  0.02;
 
-	std::thread thread_obj(gpio10.GeneratePWM, (20000, start_on_time, 400)); 
-        //gpio10.GeneratePWM(20000, start_on_time, 400);
+	while (true) {
+		int userButton = zed_board->PushButtonGet();
+		if (userButton == 0) {
+			thread tbase(&GPIO::GeneratePWM, &gpio13, 20000, base_on_time, 400); 
+			thread tbicep(&GPIO::GeneratePWM, &gpio10, 20000, others_on_time, 400);
+			thread telbow(&GPIO::GeneratePWM, &gpio11, 20000, others_on_time, 400);
+			thread twrist(&GPIO::GeneratePWM, &gpio12, 20000, others_on_time, 400);
+	
+			tbase.join();
+			tbicep.join();
+			telbow.join();
+			twrist.join();
+		} else if (userButton  == 5) {
+			cout << "we here" << endl;
+		}
+        }
+	//gpio12.GeneratePWM(20000, start_on_time, 400);
+
 	cout << "HERE" << endl;
-	gpio11.GeneratePWM(20000, start_on_time, 400);
-	gpio12.GeneratePWM(20000, start_on_time, 400);
+	//gpio11.GeneratePWM(20000, start_on_time, 300);
+	//gpio10.GeneratePWM(20000, start_on_time, 200);
 	//gpio10.GeneratePWM(20000, start_on_time, 400);
 
 	return 0;

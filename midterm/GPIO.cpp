@@ -30,8 +30,8 @@ GPIO::~GPIO()
 void GPIO::GeneratePWM(int period, int pulse, int num_periods)
 {
 	// Generate num_perios of the PWM signal
-	//for (int i = 0; i < num_periods; i++)
-	while (true)
+	for (int i = 0; i < num_periods; i++)
+	//while (true)
 	{
 		// Write ASCII character "1" to raise pin to 1, starting the
 		// ON cycle, then wait duration of pulse.

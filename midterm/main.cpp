@@ -92,37 +92,62 @@ int main()
 	int wrist_on_time, wrist_position;
         base_position = 70;
 	bicep_position = 90;
-	wrist_position = 120;
+	wrist_position = 80;
 	/**elbow_position = 90;
 	wrist_position = 90;
         end_position = 90;**/
         base_on_time = (base_position * 10) + 600;
 	wrist_on_time = (wrist_position * 10) + 600;
         others_on_time = (bicep_position * 10) + 600;
-	//end_on_time = (end_position * 10) + 600;
+
         // Generate PWM signal with 20ms period and 1.5ms on time.
         // Generate 400 periods, this will take 20ms * 400 iterations = 8s
         int periods, time, rot_speed;
         rot_speed = 15;
         //time = (end_position - start_position) /  rot_speed;
         //periods = time /  0.02;
+	int userButton = zed_board->PushButtonGet();
 
-	while (true) {
-		int userButton = zed_board->PushButtonGet();
-		if (userButton == 0) {
-			thread tbase(&GPIO::GeneratePWM, &gpio13, 20000, base_on_time, 400); 
-			thread tbicep(&GPIO::GeneratePWM, &gpio10, 20000, others_on_time, 400);
-			thread telbow(&GPIO::GeneratePWM, &gpio11, 20000, others_on_time, 400);
-			thread twrist(&GPIO::GeneratePWM, &gpio12, 20000, others_on_time, 400);
+	//cout << userButton << endl;
+	while (zed_board->PushButtonGet() == 0) {
+		//userButton = zed_board->PushButtonGet();
+		cout << userButton << endl;
+		//if (userButton == 0) {
+		thread tbase(&GPIO::GeneratePWM, &gpio13, 20000, base_on_time, 100); 
+		thread tbicep(&GPIO::GeneratePWM, &gpio10, 20000, others_on_time, 100);
+		thread telbow(&GPIO::GeneratePWM, &gpio11, 20000, wrist_on_time, 100);
+		thread twrist(&GPIO::GeneratePWM, &gpio12, 20000, wrist_on_time, 100);
 	
-			tbase.join();
-			tbicep.join();
-			telbow.join();
-			twrist.join();
-		} else if (userButton  == 5) {
+		tbase.join();
+		tbicep.join();
+		telbow.join();
+		twrist.join();
+		/**} else if (userButton  == 5) {
+			thread tbicep(&GPIO::GeneratePWM, &gpio10, 20000, end_on_time, 400);
+
 			cout << "we here" << endl;
-		}
+			//break;
+		}**/
+		//userButton = zed_board->PushButtonGet();
         }
+	int bicep_end_time, base_end_time, wrist_end_time, gripper_end_time;
+        bicep_end_time = (60 * 10) + 600;
+	base_end_time = (120 * 10) + 600;
+	wrist_end_time = (20 * 10) + 600;
+	gripper_end_time = (90 * 10) + 600;
+	//if (userButton  == 5) {
+		thread tbase(&GPIO::GeneratePWM, &gpio13, 20000, base_end_time, 400);
+        	thread tbicep(&GPIO::GeneratePWM, &gpio10, 20000, bicep_end_time, 400);
+		thread telbow(&GPIO::GeneratePWM, &gpio11, 20000, bicep_end_time, 400);
+                thread twrist(&GPIO::GeneratePWM, &gpio12, 20000, wrist_end_time, 400);
+		thread tgripper(&GPIO::GeneratePWM, &gpio0, 20000, gripper_end_time, 400);
+		tbase.join();
+                tbicep.join();
+                telbow.join();
+                twrist.join();
+		tgripper.join();
+                        cout << "we here" << endl;
+	//}
 	//gpio12.GeneratePWM(20000, start_on_time, 400);
 
 	cout << "HERE" << endl;

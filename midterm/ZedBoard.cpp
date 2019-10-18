@@ -82,7 +82,7 @@ int ZedBoard::PushButtonGet()
 	for (int i = 0; i < 5; i++) {
 		int offset = 364 + (i * 4);
 		if (RegisterRead(offset) == 1) {
-			usleep(300000);
+			//usleep(300000);
 			return i + 1;
 		}
 	}

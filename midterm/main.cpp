@@ -134,19 +134,20 @@ int main()
         bicep_end_time = (60 * 10) + 600;
 	base_end_time = (120 * 10) + 600;
 	wrist_end_time = (20 * 10) + 600;
-	gripper_end_time = (90 * 10) + 600;
+	gripper_end_time = (40 * 10) + 600;
 	//if (userButton  == 5) {
-		thread tbase(&GPIO::GeneratePWM, &gpio13, 20000, base_end_time, 400);
-        	thread tbicep(&GPIO::GeneratePWM, &gpio10, 20000, bicep_end_time, 400);
-		thread telbow(&GPIO::GeneratePWM, &gpio11, 20000, bicep_end_time, 400);
-                thread twrist(&GPIO::GeneratePWM, &gpio12, 20000, wrist_end_time, 400);
-		thread tgripper(&GPIO::GeneratePWM, &gpio0, 20000, gripper_end_time, 400);
+		thread tbase(&GPIO::GeneratePWM, &gpio13, 30000, base_end_time, 400);
+        	thread tbicep(&GPIO::GeneratePWM, &gpio10, 60000, bicep_end_time, 800);
+		thread telbow(&GPIO::GeneratePWM, &gpio11, 60000, bicep_end_time, 800);
+                thread twrist(&GPIO::GeneratePWM, &gpio12, 60000, wrist_end_time, 800);
+		//thread tgripper(&GPIO::GeneratePWM, &gpio0, 30000, gripper_end_time, 400);
 		tbase.join();
                 tbicep.join();
                 telbow.join();
                 twrist.join();
-		tgripper.join();
-                        cout << "we here" << endl;
+		gpio0.GeneratePWM(30000, gripper_end_time, 400);
+		//tgripper.join();
+                 //       cout << "we here" << endl;
 	//}
 	//gpio12.GeneratePWM(20000, start_on_time, 400);
 

@@ -19,31 +19,41 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-
-module final(buttons, clk, S, LEDs, signalout, buttonsout);
-input [3:0]buttons;
+// resistor = input from board, corresponds to row, buttonsin
+//
+module final(buttonsin, clk, S, LEDs, signalout, buttonsout);
+input [3:0]buttonsin;//buttons[4] is row 4 and 5 on the keypad
 input clk;
 output [6:0] S; //for 7-segment display
 output [7:0] LEDs;
 output signalout;
-output [3:0] buttonsout;
+output [3:0] buttonsout; //buttonsout[0] is column 1 and 8 on keypad
 reg [6:0] S;
 reg [7:0] LEDs;
 reg signalout;
 reg [3:0] buttonsout;
 reg [2:0] progress;
 reg [31:0] counter;
-reg val1, val2, val3, val4;
-reg val1a, val2a, val3a, val4a;
-reg val1b, val2b, val3b, val4b;
-reg buttonpressed;
+reg [3:0] val1;
+reg [3:0] val2;
+reg [3:0] val3;
+reg [3:0] val4;
+reg [3:0] val1a;
+reg [3:0] val2a;
+reg [3:0] val3a;
+reg [3:0] val4a;
+reg [3:0] val1b;
+reg [3:0] val2b;
+reg [3:0] val3b;
+reg [3:0] val4b;
+reg [15:0] buttonpressed;
 initial begin
     LEDs = 8'b0000_0000;
     S = 7'b000_0000;
     signalout = 0;
     progress = 3'b000;
     buttonsout = 4'b0000;
-    buttonpressed = 8'b0000_0000;
+    buttonpressed = 16'b0000_0000_0000_0000;
 end
 
     always @(posedge clk) begin
@@ -56,9 +66,9 @@ end
                 counter = counter + 1'b1;
                 if (counter >= 10) begin
                     progress = 3'b001;
-                    buttonsout = 4'b0111;
-                    buttonpressed = 8'b1000_0000;
-                    val1a = buttons;
+                    buttonsout = 4'b1110;
+//                    buttonpressed = 8'b1000_0000;
+                    val1a = buttonsin;
                     counter = 0;
                 end
             end
@@ -66,22 +76,39 @@ end
                 counter = counter + 1'b1;
                 if (counter >= 1000000) begin //wait 10 ms before reading the switch again
                     progress = 3'b010;
-                    buttonsout = 4'b0111;
-                    val1b = buttons;
+                    buttonsout = 4'b1110;
+                    val1b = buttonsin;
                     counter = 0;
                 end
             end
             3'b010: begin
                 if (val1a == val1b && val1 != val1a) begin
                     progress = 3'b011;
+                    buttonpressed[3:0] = val1a;
+                end
+                else if (val2a == val2b && val2 != val2a) begin
+                    progress = 3'b011;
+                end
+                else if (val3a == val3b && val3 != val3a) begin
+                    progress = 3'b011;
+                end
+                else if (val4a == val4b && val4 != val4a) begin
+                     progress = 3'b011;
                 end
                 else begin
                     progress = 3'b000;
                 end
             end
             3'b011: begin
-                buttonpressed = buttonpressed + val1b;
-                LEDs = buttonpressed;
+//                buttonpressed = buttonpressed + val1b;
+                case(buttonpressed)
+                    16'b1000_0000_0000_0000: begin
+                        LEDs = 8'b0000_1010;
+                    end
+                    16'b0111_0000_0000_0000: begin
+                        LEDs = 8'b0000_1010;
+                    end
+                endcase
 //                case(buttons)     
 //                    4'b0111: begin
 //                        LEDs = 8'b0000_0001;

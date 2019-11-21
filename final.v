@@ -52,8 +52,8 @@ initial begin
     S = 7'b000_0000;
     signalout = 0;
     progress = 3'b000;
-    buttonsout = 4'b0000;
-    buttonpressed = 16'b0000_0000_0000_0000;
+    buttonsout = 4'b1110;
+    buttonpressed = 8'b0000_0000;
 end
 
     always @(posedge clk) begin
@@ -61,30 +61,80 @@ end
         case(progress)
 
             default: progress = 3'b000;
-    
+
             3'b000: begin
                 counter = counter + 1'b1;
-                if (counter >= 10) begin
+                if (counter >= 10 && counter < 20) begin
+//                    progress = 3'b001;
+//                    buttonpressed = 8'b1000_0000;
+                    if (buttonsin != 1111) begin
+                        val1a = buttonsin;
+                    end
+                    buttonsout = 4'b1101;
+//                    LEDs = 0 + buttonsin;
+//                    counter = 0;
+                end
+                else if (counter >= 20 && counter < 30) begin
+                    if (buttonsin != 1111) begin
+                        val2a = buttonsin;
+                    end
+                    buttonsout = 4'b1011;
+                end
+                else if (counter >= 30 && counter < 40) begin
+                    if (buttonsin != 1111) begin
+                        val3a = buttonsin;
+                    end
+                    buttonsout = 4'b0111;
+                end
+                else if (counter >= 40 && counter < 50) begin
+                    if (buttonsin != 1111) begin
+                        val4a = buttonsin;
+                    end
+                    counter = 0;
                     progress = 3'b001;
                     buttonsout = 4'b1110;
-//                    buttonpressed = 8'b1000_0000;
-                    val1a = buttonsin;
-                    counter = 0;
                 end
-            end
+            end                                    
+                    
             3'b001: begin
                 counter = counter + 1'b1;
-                if (counter >= 1000000) begin //wait 10 ms before reading the switch again
-                    progress = 3'b010;
-                    buttonsout = 4'b1110;
-                    val1b = buttonsin;
-                    counter = 0;
+                if (counter >= 1000010 && counter < 1000020) begin
+                    if (buttonsin != 1111) begin
+                        val1b = buttonsin;
+                    end
+                    buttonsout = 4'b1101;
                 end
+                else if (counter >= 1000020 && counter < 1000030) begin
+                    if (buttonsin != 1111) begin
+                        val2b = buttonsin;
+                    end
+                    buttonsout = 4'b1011;
+                end
+                else if (counter >= 1000030 && counter < 1000040) begin
+                    if (buttonsin != 1111) begin
+                        val3b = buttonsin;
+                    end
+                    buttonsout = 4'b0111;
+                end
+                else if (counter >= 1000040 && counter < 1000050) begin
+                    if (buttonsin != 1111) begin
+                        val4b = buttonsin;
+                    end
+                    counter = 0;
+                    progress = 3'b010;
+                end
+//                if (counter >= 1000000) begin //wait 10 ms before reading the switch again
+//                    progress = 3'b010;
+////                    buttonsout = 4'b1110;
+//                    val1b = buttonsin;
+//                    counter = 0;
+//                end
             end
             3'b010: begin
                 if (val1a == val1b && val1 != val1a) begin
                     progress = 3'b011;
-                    buttonpressed[3:0] = val1a;
+                    buttonpressed = 8'b1110_0000 + val1a;
+                    LEDs = buttonpressed;
                 end
                 else if (val2a == val2b && val2 != val2a) begin
                     progress = 3'b011;
@@ -102,10 +152,12 @@ end
             3'b011: begin
 //                buttonpressed = buttonpressed + val1b;
                 case(buttonpressed)
-                    16'b1000_0000_0000_0000: begin
-                        LEDs = 8'b0000_1010;
+                    8'b1110_0000: begin
+                        val1 = val1a;
+                        LEDs = 8'b0000_0001;
                     end
-                    16'b0111_0000_0000_0000: begin
+                    8'b0111_0000: begin
+                        val1 = val1a;
                         LEDs = 8'b0000_1010;
                     end
                 endcase
